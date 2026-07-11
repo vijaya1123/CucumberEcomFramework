@@ -1,4 +1,5 @@
 name: Run Automation Suite
+
 on:
   push:
     branches: [ main ]
