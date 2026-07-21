@@ -1,0 +1,49 @@
+version: 2.1
+
+# Use CircleCI's official Maven image with JDK 17 (adjust if needed)
+jobs:
+  test:
+    docker:
+      - image: cimg/openjdk:17.0
+    working_directory: ~/project
+
+    steps:
+      # Step 1: Check out the code from your repository
+      - checkout
+
+      # Step 2: Cache Maven dependencies to speed up builds
+      - restore_cache:
+          keys:
+            - maven-deps-{{ checksum "pom.xml" }}
+            - maven-deps-
+
+      # Step 3: Install dependencies (without running tests)
+      - run:
+          name: Install dependencies
+          command: mvn dependency:go-offline --batch-mode
+
+      # Step 4: Save Maven cache
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-deps-{{ checksum "pom.xml" }}
+
+      # Step 5: Run Cucumber tests
+      - run:
+          name: Run Cucumber Tests
+          command: mvn test -Dcucumber.filter.tags="@smoke"
+
+      # Step 6: Store test results for CircleCI insights
+      - store_test_results:
+          path: target/surefire-reports
+
+      # Step 7: Store Cucumber HTML reports (if generated)
+      - store_artifacts:
+          path: target/cucumber-reports
+          destination: cucumber-reports
+
+workflows:
+  version: 2
+  test-workflow:
+    jobs:
+      - test
