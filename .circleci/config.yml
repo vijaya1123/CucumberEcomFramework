@@ -30,7 +30,7 @@ jobs:
             - ~/.m2
           key: maven-deps-{{ checksum "pom.xml" }}
 
-      # Run API automation tests
+      # Run Cucumber automation tests
       - run:
           name: Run cucumber Automation Tests
           command: mvn clean test 
