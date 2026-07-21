@@ -10,7 +10,6 @@ jobs:
     steps:
       # Step 1: Check out the code from your repository
       - checkout
-
       # Step 2: Cache Maven dependencies to speed up builds
       - restore_cache:
           keys:
