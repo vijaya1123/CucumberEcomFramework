@@ -32,8 +32,8 @@ jobs:
 
       # Run API automation tests
       - run:
-          name: Run API Automation Tests
-          command: mvn clean test -Dcucumber.filter.tags="@sort"
+          name: Run cucumber Automation Tests
+          command: mvn clean test 
 
       # Store test results for CircleCI Insights
       - store_test_results:
