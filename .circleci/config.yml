@@ -1,50 +1,51 @@
 version: 2.1
 
-executors:
-  java_executor:
-    docker:
-      - image: cimg/openjdk:17.0  # CircleCI's official OpenJDK 17 image
-    working_directory: ~/project
+# Use CircleCI's official Maven + OpenJDK image
+orbs:
+  maven: circleci/maven@1.4.1
 
 jobs:
-  build-and-test:
-    executor: java_executor
-    steps:
-      - checkout  # Pulls your code from the repo
+  cucumber-tests:
+    docker:
+      - image: cimg/openjdk:17.0  # Java 17; change if needed
+    working_directory: ~/project
 
-      # Restore Maven cache to speed up builds
+    steps:
+      - checkout  # Pull your code from the repo
+
+      # Restore Maven dependencies from cache
       - restore_cache:
           keys:
             - maven-deps-{{ checksum "pom.xml" }}
             - maven-deps-
 
-      # Download dependencies
+      # Install dependencies without running tests
       - run:
           name: Install dependencies
           command: mvn dependency:go-offline --batch-mode
 
-      # Save Maven cache
+      # Save dependencies to cache
       - save_cache:
           paths:
             - ~/.m2
           key: maven-deps-{{ checksum "pom.xml" }}
 
-      # Run Cucumber tests
+      # Run API automation tests
       - run:
-          name: Run Cucumber Tests
+          name: Run API Automation Tests
           command: mvn clean test
 
-      # Store test results for CircleCI test summary
+      # Store test results for CircleCI Insights
       - store_test_results:
           path: target/surefire-reports
 
-      # Store HTML reports (if using Cucumber HTML plugin)
+      # Store build artifacts (optional: logs, reports, etc.)
       - store_artifacts:
-          path: target/cucumber-reports
-          destination: cucumber-reports
+          path: target/surefire-reports
+          destination: test-reports
 
 workflows:
   version: 2
-  build_and_test_workflow:
+  test-workflow:
     jobs:
-      - build-and-test
+      - cucumber-tests
