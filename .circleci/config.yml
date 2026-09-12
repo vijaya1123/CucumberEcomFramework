@@ -3,7 +3,6 @@ version: 2.1
 # Use CircleCI's official Maven + OpenJDK image
 orbs:
   maven: circleci/maven@1.4.1
-
 jobs:
   cucumber-tests:
     docker:
