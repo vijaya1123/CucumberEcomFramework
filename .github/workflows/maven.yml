@@ -8,6 +8,7 @@ on:
     # Runs once a week so the badge stays green even with no new commits
     - cron: '0 6 * * 1'
   workflow_dispatch:
+  
 jobs:
   test:
   
